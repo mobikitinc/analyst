@@ -1,6 +1,6 @@
 # Analyst in a Box
 
-Frontend and backend stack to enable interactive natural language-style querying over SQL databases. 
+Frontend and backend stack to enable interactive natural language-style querying over SQL databases.
 
 It's as if you literally had an _Analyst_ in a _Box_.
 
@@ -33,7 +33,7 @@ Example Queries:
 
 **<ins>Demos</ins>**
 
-_These work on our local, hopefully, they'll work on your machine too... Try them out!_
+_These work on our local machines, hopefully, they'll work on your machine too... Try them out!_
 
 - [DarkSky](demos/darksky/README.md) - _see the frontend in action_
 - [Dataset of Annotated Car Trajectories (DACT)](demos/dact/README.md) - _see what the frontend and backend can do together_
