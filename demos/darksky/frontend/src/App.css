@@ -1,0 +1,18 @@
+.container {
+  position: absolute;
+  width: 100vw;
+}
+
+.searchContainer {
+  height: 15vh;
+  padding: 30px;
+}
+
+.search {
+  width: 40vw;
+}
+
+.mapContainer {
+  height: 85vh;
+  bottom: 0;
+}

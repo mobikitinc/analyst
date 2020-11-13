@@ -1,0 +1,4 @@
+autopep8==1.5.2
+pep8==1.7.1
+psycopg2==2.8.5
+pycodestyle==2.5.0

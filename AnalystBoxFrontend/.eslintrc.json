@@ -1,0 +1,38 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": ["plugin:react/recommended", "airbnb"],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "import"],
+  "parser": "babel-eslint",
+  "rules": {
+    "no-const-assign": "warn",
+    "no-this-before-super": "warn",
+    "no-undef": "error",
+    "no-unreachable": "error",
+    "no-unused-vars": "error",
+    "no-undefined": "error",
+    "constructor-super": "warn",
+    "valid-typeof": "warn",
+    "no-console": "warn",
+    "quotes": [2, "single", { "avoidEscape": true }],
+    "no-param-reassign": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/destructuring-assignment": "off",
+    "react/prop-types": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/forbid-prop-types": ["error", { "forbid": ["any", "array"] }],
+    "import/no-unresolved": "error",
+    "import/no-extraneous-dependencies": "error"
+  }
+}
