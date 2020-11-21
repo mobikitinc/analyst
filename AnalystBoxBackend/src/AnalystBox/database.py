@@ -29,10 +29,7 @@ class SQLiteConnection(BaseConnection):
         self.db = None
 
     def __enter__(self):
-        self.db = sqlite3.connect(
-            self.db_path,
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
+        self.db = sqlite3.connect(self.db_path, detect_types=sqlite3.PARSE_DECLTYPES)
         self.db.row_factory = sqlite3.Row
         return self.db
 
@@ -54,7 +51,10 @@ class PostgresConnection(BaseConnection):
 
     def __enter__(self):
         self.connection = psycopg2.connect(
-            user=self.user, password=self.password, host=self.host, database=self.database
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            database=self.database,
         )
         self.cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
         return self.cursor
@@ -79,19 +79,23 @@ class BaseWrapper:
 # Database Wrappers - SQLite
 class SQLiteWrapper(BaseWrapper):
     def __init__(self, db_path):
-        assert is_valid_file(db_path), 'db_path must resolve to an existing, readable file'
+        assert is_valid_file(
+            db_path
+        ), "db_path must resolve to an existing, readable file"
         self.db_path = db_path
 
     def __get_datatype(self, datatype):
         if datatype not in sqlite3_to_datatype:
-            raise ValueError(f'datatype "{datatype}" must be in {set(sqlite3_to_datatype.keys())}')
+            raise ValueError(
+                f'datatype "{datatype}" must be in {set(sqlite3_to_datatype.keys())}'
+            )
 
         return sqlite3_to_datatype[datatype]
 
     def get_all_tables(self):
         with SQLiteConnection(self.db_path) as db:
             tables = db.execute(f"SELECT name FROM sqlite_master WHERE type='table';")
-            tables = [dict(result)['name'] for result in tables]
+            tables = [dict(result)["name"] for result in tables]
 
         return tables
 
@@ -100,7 +104,9 @@ class SQLiteWrapper(BaseWrapper):
             columns = db.execute(f"PRAGMA table_info('{table}')")
             columns = [dict(result) for result in columns]
 
-        columns = [(result['name'], self.__get_datatype(result['type'])) for result in columns]
+        columns = [
+            (result["name"], self.__get_datatype(result["type"])) for result in columns
+        ]
         return columns
 
 
@@ -115,27 +121,37 @@ class PostgresWrapper(BaseWrapper):
 
     def __get_datatype(self, datatype):
         if datatype not in postgres_to_datatype:
-            raise ValueError(f'datatype "{datatype}" must be in {set(postgres_to_datatype.keys())}')
+            raise ValueError(
+                f'datatype "{datatype}" must be in {set(postgres_to_datatype.keys())}'
+            )
 
         return postgres_to_datatype[datatype]
 
     def get_all_tables(self):
-        with PostgresConnection(self.user, self.password, self.host, self.database) as cursor:
-            cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+        with PostgresConnection(
+            self.user, self.password, self.host, self.database
+        ) as cursor:
+            cursor.execute(
+                "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+            )
             tables = cursor.fetchall()
             tables = [table[0] for table in tables]
 
         return tables
 
     def get_all_columns(self, table):
-        with PostgresConnection(self.user, self.password, self.host, self.database) as cursor:
+        with PostgresConnection(
+            self.user, self.password, self.host, self.database
+        ) as cursor:
             columns = []
 
             cursor.execute(f"SELECT * FROM {table} LIMIT 0")
             column_names = [column.name for column in cursor.description]
 
             for column in column_names:
-                cursor.execute(f"SELECT data_type FROM information_schema.columns WHERE column_name = '{column}' AND table_name = '{table}'")
+                cursor.execute(
+                    f"SELECT data_type FROM information_schema.columns WHERE column_name = '{column}' AND table_name = '{table}'"
+                )
                 column_type = cursor.fetchall()[0][0]
                 columns.append((column, self.__get_datatype(column_type)))
 
@@ -149,9 +165,11 @@ class DatabaseWrapper(BaseWrapper):
         self.db_path = db_path
 
         # Check if database type is valid
-        supported_db_types = {'sqlite3': SQLiteWrapper, 'postgres': PostgresWrapper}
+        supported_db_types = {"sqlite3": SQLiteWrapper, "postgres": PostgresWrapper}
         if db_type not in supported_db_types:
-            raise ValueError(f'database type "{db_type}" must be in {set(supported_db_types.keys())}')
+            raise ValueError(
+                f'database type "{db_type}" must be in {set(supported_db_types.keys())}'
+            )
 
         # Create proper database wrapper
         self.db = supported_db_types[db_type](self.db_path)
@@ -166,8 +184,7 @@ class DatabaseWrapper(BaseWrapper):
 # Database
 # Database - Main
 class Database:
-    """Represents a database.
-    """
+    """Represents a database."""
 
     def __init__(self, db_path, db_type, tables):
         # Create database wrapper
@@ -220,7 +237,9 @@ class Database:
             # For all tables
             for table in self.tables:
                 # For each QRK in generator
-                for qrk in generate_qrks(self.expansions, self.max_variate, table.name, table.columns):
+                for qrk in generate_qrks(
+                    self.expansions, self.max_variate, table.name, table.columns
+                ):
                     questions.append(qrk.question)
                     results.append(qrk.result)
                     keywords.extend(qrk.keywords)
@@ -230,7 +249,7 @@ class Database:
 
             # Check for question collision
             if len(questions) != len(set(questions)):
-                warn('question collision detected, consider changing expansions')
+                warn("question collision detected, consider changing expansions")
 
             # Set cache
             self.cache = (questions, results, keywords)
@@ -241,8 +260,7 @@ class Database:
 
 # Database - Table
 class Table:
-    """Represents a table in a database.
-    """
+    """Represents a table in a database."""
 
     def __init__(self, name, columns):
         self.name = name

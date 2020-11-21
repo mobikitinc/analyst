@@ -5,10 +5,7 @@ from .corpus import words
 
 # Parser Setup
 word_cost = dict(
-    (
-        word,
-        math.log((i + 1) * math.log(len(words)))
-    ) for i, word in enumerate(words)
+    (word, math.log((i + 1) * math.log(len(words)))) for i, word in enumerate(words)
 )
 max_length = max(len(x) for x in words)
 
@@ -19,7 +16,7 @@ def parse(field):
     field = field.lower()
 
     # Split on non-alphanumeric characters
-    field = re.split(r'[^a-zA-Z0-9]+', field)
+    field = re.split(r"[^a-zA-Z0-9]+", field)
 
     # Parse all substrings
     result = [parse_core(subfield) for subfield in field]
@@ -32,8 +29,11 @@ def parse(field):
 def parse_core(field):
     # Find best match's cost and length for the first i characters
     def best_match(i):
-        candidates = enumerate(reversed(cost[max(0, i - max_length): i]))
-        return min((c + word_cost.get(field[i - n - 1: i], 9e999), n + 1) for n, c in candidates)
+        candidates = enumerate(reversed(cost[max(0, i - max_length) : i]))
+        return min(
+            (c + word_cost.get(field[i - n - 1 : i], 9e999), n + 1)
+            for n, c in candidates
+        )
 
     # Determine costs
     cost = [0]
@@ -47,7 +47,7 @@ def parse_core(field):
     while i > 0:
         c, n = best_match(i)
         assert c == cost[i]
-        result.append(field[i - n: i])
+        result.append(field[i - n : i])
         i -= n
 
     # Return string

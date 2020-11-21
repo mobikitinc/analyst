@@ -17,12 +17,18 @@ class AnalystBox:
     :param default_expansions: Whether the default expansions in defaults should be used.
     """
 
-    def __init__(self, db_path, db_type='postgres', tables=[], default_expansions=False):
+    def __init__(
+        self, db_path, db_type="postgres", tables=[], default_expansions=False
+    ):
         # Input
-        assert type(db_path) == str, 'db_path must be of type str'
-        assert type(db_type) == str, 'db_type must be of type str'
-        assert type(tables) == str or type(tables) == list, 'tables must be of type Union[str, List[str]]'
-        assert type(default_expansions) == bool, 'default_expansions must be of type bool'
+        assert type(db_path) == str, "db_path must be of type str"
+        assert type(db_type) == str, "db_type must be of type str"
+        assert (
+            type(tables) == str or type(tables) == list
+        ), "tables must be of type Union[str, List[str]]"
+        assert (
+            type(default_expansions) == bool
+        ), "default_expansions must be of type bool"
 
         if type(tables) == str:
             tables = [tables]
@@ -58,16 +64,18 @@ class AnalystBox:
         """
 
         # Input
-        assert func, 'func must be defined'
+        assert func, "func must be defined"
         if rule:
-            assert type(rule) == tuple, 'rule must be of type tuple'
+            assert type(rule) == tuple, "rule must be of type tuple"
             for datatype in rule:
                 if datatype not in Datatype.__members__:
-                    assert type(datatype) == Datatype, f'datatype {datatype} must be in {list(Datatype)}'
+                    assert (
+                        type(datatype) == Datatype
+                    ), f"datatype {datatype} must be in {list(Datatype)}"
         else:
-            assert variate is not None, 'either rule or variate must be specified'
-            assert type(variate) == int, 'variate must be of type int'
-            assert variate >= 0, 'variate must be greater than or equal to 0'
+            assert variate is not None, "either rule or variate must be specified"
+            assert type(variate) == int, "variate must be of type int"
+            assert variate >= 0, "variate must be greater than or equal to 0"
 
         # If rule, add single expansion
         if rule:
@@ -116,7 +124,9 @@ class AnalystBox:
 
         # Input
         if blueprint.name in self.blueprints:
-            assert self.blueprints[blueprint.name] == blueprint, 'blueprint collision detected'
+            assert (
+                self.blueprints[blueprint.name] == blueprint
+            ), "blueprint collision detected"
 
         # If no collision, add blueprint
         if blueprint.name not in self.blueprints:

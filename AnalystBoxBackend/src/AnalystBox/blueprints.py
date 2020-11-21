@@ -3,7 +3,7 @@ from warnings import warn
 
 
 # Blueprint
-class Blueprint():
+class Blueprint:
     """Represents a blueprint, a collection of rules and their
     corresponding expansion functions that can be registered
     on a real application later.
@@ -25,15 +25,13 @@ class Blueprint():
         self.deferred = []
 
     def add_expansion(self, func, rule=None, variate=0):
-        """Like :meth:`AnalystBox.add_expansion` but for a blueprint.
-        """
+        """Like :meth:`AnalystBox.add_expansion` but for a blueprint."""
 
         # Record expansion
         self.record(lambda s: s.add_expansion(func, rule, variate))
 
     def expansion(self, rule=None, variate=0):
-        """Like :meth:`AnalystBox.expansion` but for a blueprint.
-        """
+        """Like :meth:`AnalystBox.expansion` but for a blueprint."""
 
         def decorator(func):
             self.add_expansion(func, rule, variate)
@@ -50,7 +48,9 @@ class Blueprint():
 
         # If already registered, warn
         if self._is_registered:
-            warn('blueprint has been registered and is being modified, new changes will not appear')
+            warn(
+                "blueprint has been registered and is being modified, new changes will not appear"
+            )
 
         # Add function to deferred
         self.deferred.append(func)
@@ -64,7 +64,7 @@ class Blueprint():
 
         # If already registered, warn
         if self._is_registered:
-            warn('blueprint already registered, registration is being skipped')
+            warn("blueprint already registered, registration is being skipped")
         else:
             # Otherwise set registered
             self._is_registered = True
