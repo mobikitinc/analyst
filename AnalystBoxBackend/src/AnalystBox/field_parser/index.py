@@ -1,6 +1,7 @@
+import math
 import os
 import re
-import math
+
 from .corpus import words
 
 # Parser Setup

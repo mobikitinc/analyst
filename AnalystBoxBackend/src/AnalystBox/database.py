@@ -1,12 +1,11 @@
-# External
 import sqlite3
+from urllib.parse import urlparse
+from warnings import warn
+
 import psycopg2
 import psycopg2.extras
-from warnings import warn
-from urllib.parse import urlparse
 
-# Internal
-from .datatypes import Datatype, sqlite3_to_datatype, postgres_to_datatype
+from .datatypes import Datatype, postgres_to_datatype, sqlite3_to_datatype
 from .field_parser import parse
 from .helpers import is_valid_file
 from .qrks import generate_qrks

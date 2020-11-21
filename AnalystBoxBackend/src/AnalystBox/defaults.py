@@ -1,7 +1,6 @@
-from .qrks import QRK
-from .datatypes import Datatype
 from .blueprints import Blueprint
-
+from .datatypes import Datatype
+from .qrks import QRK
 
 # Create default blueprint
 blueprint = Blueprint("default")

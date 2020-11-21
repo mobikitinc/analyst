@@ -1,6 +1,5 @@
-# External
-import json
 import itertools
+import json
 
 
 # Generate QRKs

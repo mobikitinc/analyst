@@ -1,7 +1,8 @@
+import itertools
 import os
 import warnings
-import itertools
 from pathlib import Path
+
 from .datatypes import Datatype
 
 

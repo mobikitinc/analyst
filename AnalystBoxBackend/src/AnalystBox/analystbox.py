@@ -1,8 +1,7 @@
-# Internal
 from .database import Database
 from .datatypes import Datatype
-from .helpers import get_datatype_permutations
 from .defaults import blueprint
+from .helpers import get_datatype_permutations
 
 
 # AnalystBox
