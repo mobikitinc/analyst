@@ -9,9 +9,9 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@mobikitinc/analystbox": "file:../../../AnalystBoxFrontend",
     "ag-grid-community": "^22.1.1",
     "ag-grid-react": "^22.1.1",
-    "analystbox": "file:../../../AnalystBoxFrontend",
     "cross-fetch": "^3.0.6",
     "flexsearch": "^0.6.32",
     "query-string": "^6.12.1",

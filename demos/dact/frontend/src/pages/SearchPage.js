@@ -1,7 +1,7 @@
 // External
 import React, { Component } from 'react';
 import { Grid, Image } from 'semantic-ui-react';
-import AnalystBox from 'analystbox';
+import AnalystBox from '@mobikitinc/analystbox';
 
 // Redux
 import { connect } from 'react-redux';

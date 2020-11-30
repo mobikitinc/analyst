@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AnalystBox from 'analystbox';
+import AnalystBox from '@mobikitinc/analystbox';
 import './App.css';
 import cities from './data/cities.json';
 import latitudelongitudes from './data/latitudelongitudes.json';
