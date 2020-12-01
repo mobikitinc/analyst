@@ -1,54 +1,82 @@
+from __future__ import annotations
+
+import abc
 import sqlite3
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type
 from urllib.parse import urlparse
 from warnings import warn
 
-import psycopg2
-import psycopg2.extras
+import psycopg2  # type: ignore
+import psycopg2.extras  # type: ignore
 
-from .datatypes import Datatype, postgres_to_datatype, sqlite3_to_datatype
+from .datatypes import postgres_to_datatype, sqlite3_to_datatype
 from .field_parser import parse
 from .helpers import is_valid_file
 from .qrks import generate_qrks
+
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from .datatypes import Datatype
+    from .types import QRKGenerator, QRKRule
 
 
 # Database Connections
 # Database Connections - Interface
 class BaseConnection:
-    def __enter__(self):
-        pass
+    @abc.abstractmethod
+    def __enter__(self) -> Any:
+        raise NotImplementedError
 
-    def __exit__(self, exc_type, exc_value, traceback):
-        pass
+    @abc.abstractmethod
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        raise NotImplementedError
 
 
 # Database Connections - SQLite
 class SQLiteConnection(BaseConnection):
-    def __init__(self, db_path):
+    def __init__(self, db_path: str):
         self.db_path = db_path
-        self.db = None
+        self.db: Optional[sqlite3.Connection] = None
 
-    def __enter__(self):
+    def __enter__(self) -> sqlite3.Connection:
         self.db = sqlite3.connect(self.db_path, detect_types=sqlite3.PARSE_DECLTYPES)
         self.db.row_factory = sqlite3.Row
         return self.db
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         if self.db is not None:
             self.db.close()
 
 
 # Database Connections - Postgres
 class PostgresConnection(BaseConnection):
-    def __init__(self, user, password, host, database):
+    def __init__(
+        self,
+        user: Optional[str],
+        password: Optional[str],
+        host: Optional[str],
+        database: str,
+    ):
         self.user = user
         self.password = password
         self.host = host
         self.database = database
 
-        self.connection = None
-        self.cursor = None
+        self.connection: Optional[Any] = None
+        self.cursor: Optional[Any] = None
 
-    def __enter__(self):
+    def __enter__(self) -> Any:
         self.connection = psycopg2.connect(
             user=self.user,
             password=self.password,
@@ -58,7 +86,12 @@ class PostgresConnection(BaseConnection):
         self.cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
         return self.cursor
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         if self.connection is not None:
             if self.cursor is not None:
                 self.cursor.close()
@@ -68,22 +101,24 @@ class PostgresConnection(BaseConnection):
 # Database Wrappers
 # Database Wrappers - Interface
 class BaseWrapper:
-    def get_all_tables(self):
-        pass
+    @abc.abstractmethod
+    def get_all_tables(self) -> List[str]:
+        raise NotImplementedError
 
-    def get_all_columns(self, table):
-        pass
+    @abc.abstractmethod
+    def get_all_columns(self, table: str) -> List[Tuple[str, Datatype]]:
+        raise NotImplementedError
 
 
 # Database Wrappers - SQLite
 class SQLiteWrapper(BaseWrapper):
-    def __init__(self, db_path):
+    def __init__(self, db_path: str):
         assert is_valid_file(
             db_path
         ), "db_path must resolve to an existing, readable file"
         self.db_path = db_path
 
-    def __get_datatype(self, datatype):
+    def __get_datatype(self, datatype: str) -> Datatype:
         if datatype not in sqlite3_to_datatype:
             raise ValueError(
                 f'datatype "{datatype}" must be in {set(sqlite3_to_datatype.keys())}'
@@ -91,34 +126,38 @@ class SQLiteWrapper(BaseWrapper):
 
         return sqlite3_to_datatype[datatype]
 
-    def get_all_tables(self):
+    def get_all_tables(self) -> List[str]:
         with SQLiteConnection(self.db_path) as db:
-            tables = db.execute(f"SELECT name FROM sqlite_master WHERE type='table';")
-            tables = [dict(result)["name"] for result in tables]
+            raw_tables = db.execute(
+                f"SELECT name FROM sqlite_master WHERE type='table';"
+            )
+            tables = [dict(result)["name"] for result in raw_tables]
 
         return tables
 
-    def get_all_columns(self, table):
+    def get_all_columns(self, table: str) -> List[Tuple[str, Datatype]]:
         with SQLiteConnection(self.db_path) as db:
-            columns = db.execute(f"PRAGMA table_info('{table}')")
-            columns = [dict(result) for result in columns]
+            raw_columns = [
+                dict(result) for result in db.execute(f"PRAGMA table_info('{table}')")
+            ]
 
         columns = [
-            (result["name"], self.__get_datatype(result["type"])) for result in columns
+            (result["name"], self.__get_datatype(result["type"]))
+            for result in raw_columns
         ]
         return columns
 
 
 # Database Wrappers - Postgres
 class PostgresWrapper(BaseWrapper):
-    def __init__(self, db_path):
+    def __init__(self, db_path: str):
         result = urlparse(db_path)
         self.user = result.username
         self.password = result.password
         self.host = result.hostname
         self.database = result.path[1:]
 
-    def __get_datatype(self, datatype):
+    def __get_datatype(self, datatype: str) -> Datatype:
         if datatype not in postgres_to_datatype:
             raise ValueError(
                 f'datatype "{datatype}" must be in {set(postgres_to_datatype.keys())}'
@@ -126,19 +165,19 @@ class PostgresWrapper(BaseWrapper):
 
         return postgres_to_datatype[datatype]
 
-    def get_all_tables(self):
+    def get_all_tables(self) -> List[str]:
         with PostgresConnection(
             self.user, self.password, self.host, self.database
         ) as cursor:
             cursor.execute(
                 "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
             )
-            tables = cursor.fetchall()
-            tables = [table[0] for table in tables]
+            raw_tables = cursor.fetchall()
+            tables = [table[0] for table in raw_tables]
 
         return tables
 
-    def get_all_columns(self, table):
+    def get_all_columns(self, table: str) -> List[Tuple[str, Datatype]]:
         with PostgresConnection(
             self.user, self.password, self.host, self.database
         ) as cursor:
@@ -159,7 +198,7 @@ class PostgresWrapper(BaseWrapper):
 
 # Database Wrappers - Main
 class DatabaseWrapper(BaseWrapper):
-    def __init__(self, db_path, db_type):
+    def __init__(self, db_path: str, db_type: str):
         # Database path
         self.db_path = db_path
 
@@ -173,10 +212,10 @@ class DatabaseWrapper(BaseWrapper):
         # Create proper database wrapper
         self.db = supported_db_types[db_type](self.db_path)
 
-    def get_all_tables(self):
+    def get_all_tables(self) -> List[str]:
         return self.db.get_all_tables()
 
-    def get_all_columns(self, table):
+    def get_all_columns(self, table: str) -> List[Tuple[str, Datatype]]:
         return self.db.get_all_columns(table)
 
 
@@ -185,7 +224,7 @@ class DatabaseWrapper(BaseWrapper):
 class Database:
     """Represents a database."""
 
-    def __init__(self, db_path, db_type, tables):
+    def __init__(self, db_path: str, db_type: str, tables: List[str]):
         # Create database wrapper
         self.db = DatabaseWrapper(db_path, db_type)
 
@@ -203,18 +242,20 @@ class Database:
         # Get tables and columns information
         self.tables = []
         for table in tables:
-            columns = self.db.get_all_columns(table)
-            columns = [Column(fieldname, datatype) for (fieldname, datatype) in columns]
+            all_columns = self.db.get_all_columns(table)
+            columns = [
+                Column(fieldname, datatype) for (fieldname, datatype) in all_columns
+            ]
             self.tables.append(Table(table, columns))
 
         # Create expansions and set max variate
-        self.expansions = {}
+        self.expansions: Dict[QRKRule, List[QRKGenerator]] = {}
         self.max_variate = 0
 
         # Create cache
-        self.cache = None
+        self.cache: Optional[Tuple[List[Any], List[Any], List[Any]]] = None
 
-    def add_expansion(self, rule, func):
+    def add_expansion(self, rule: QRKRule, func: QRKGenerator) -> None:
         # If rule doesn't exist, create empty list
         if rule not in self.expansions:
             self.expansions[rule] = []
@@ -228,7 +269,7 @@ class Database:
         # Invalidate cache
         self.cache = None
 
-    def get_qrks(self):
+    def get_qrks(self) -> Tuple[List[Any], List[Any], List[Any]]:
         # If not cached, generate and cache QRKs
         if not self.cache:
             questions, results, keywords = [], [], []
@@ -261,7 +302,7 @@ class Database:
 class Table:
     """Represents a table in a database."""
 
-    def __init__(self, name, columns):
+    def __init__(self, name: str, columns: List[Column]):
         self.name = name
         self.columns = columns
 
@@ -273,7 +314,7 @@ class Column:
     Given as a parameter in univariate, bivariate, and multivariate expansions.
     """
 
-    def __init__(self, field, datatype):
+    def __init__(self, field: str, datatype: Datatype):
         self.field = field
         self.datatype = datatype
 

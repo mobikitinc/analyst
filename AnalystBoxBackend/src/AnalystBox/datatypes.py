@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from enum import Enum
+from typing import List
 
 
 # Datatype
@@ -17,7 +20,7 @@ class Datatype(Enum):
     NONE = "NONE"
 
     @staticmethod
-    def get_list():
+    def get_list() -> List[Datatype]:
         """Get list of datatypes.
 
         :rtype: List[Datatype]

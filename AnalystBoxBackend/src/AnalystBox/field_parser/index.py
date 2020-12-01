@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import math
 import os
 import re
+from typing import Tuple
 
 from .corpus import words
 
@@ -12,43 +15,43 @@ max_length = max(len(x) for x in words)
 
 
 # Parser
-def parse(field):
+def parse(field: str) -> str:
     # Make lowercase
     field = field.lower()
 
     # Split on non-alphanumeric characters
-    field = re.split(r"[^a-zA-Z0-9]+", field)
+    field_words = re.split(r"[^a-zA-Z0-9]+", field)
 
     # Parse all substrings
-    result = [parse_core(subfield) for subfield in field]
+    result = [parse_core(word) for word in field_words]
 
     # Return string
     return " ".join(result)
 
 
 # Parser Core
-def parse_core(field):
+def parse_core(word: str) -> str:
     # Find best match's cost and length for the first i characters
-    def best_match(i):
+    def best_match(i: int) -> Tuple[float, int]:
         candidates = enumerate(reversed(cost[max(0, i - max_length) : i]))
         return min(
-            (c + word_cost.get(field[i - n - 1 : i], 9e999), n + 1)
+            (c + word_cost.get(word[i - n - 1 : i], 9e999), n + 1)
             for n, c in candidates
         )
 
     # Determine costs
-    cost = [0]
-    for i in range(1, len(field) + 1):
+    cost = [0.0]
+    for i in range(1, len(word) + 1):
         c, n = best_match(i)
         cost.append(c)
 
     # Backtrack to find minimum cost string
     result = []
-    i = len(field)
+    i = len(word)
     while i > 0:
         c, n = best_match(i)
         assert c == cost[i]
-        result.append(field[i - n : i])
+        result.append(word[i - n : i])
         i -= n
 
     # Return string

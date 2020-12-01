@@ -1,4 +1,6 @@
-.DS_Store
 .vscode/
 venv/
 dist/
+__pycache__/
+.mypy_cache/
+.DS_Store

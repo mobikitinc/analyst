@@ -1,11 +1,24 @@
+from __future__ import annotations
+
 import itertools
 import json
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Protocol, Tuple
+
+if TYPE_CHECKING:
+    from .database import Column
+    from .datatypes import Datatype
+    from .types import QRKGenerator, QRKRule
 
 
 # Generate QRKs
-def generate_qrks(expansions, max_variate, table, columns):
+def generate_qrks(
+    expansions: Dict[QRKRule, List[QRKGenerator]],
+    max_variate: int,
+    table_name: str,
+    columns: List[Column],
+) -> Iterable[QRK]:
     # Create result
-    result = []
+    results = []
 
     # For each variate
     for r in range(0, max_variate + 1):
@@ -23,13 +36,13 @@ def generate_qrks(expansions, max_variate, table, columns):
             # For each generator
             for generator in generators:
                 # Call generator with table name and columns
-                generator = generator(table, *list(option))
+                generator_result = generator(table_name, *list(option))
 
                 # Append generator to result
-                result.append(generator)
+                results.append(generator_result)
 
     # Chain resulting generators together
-    result = itertools.chain(*result)
+    result = itertools.chain(*results)
 
     # Return QRK generator
     return result
@@ -41,7 +54,7 @@ class QRK:
     yielded one or more times from any valid expansion function.
     """
 
-    def __init__(self, question, result, keywords=[]):
+    def __init__(self, question: Any, result: Any, keywords: List[Any] = []):
         self.question = question
         self.result = result
         self.keywords = keywords
