@@ -4,7 +4,7 @@ Frontend and backend stack to enable interactive natural language-style querying
 
 It's as if you literally had an _Analyst_ in a _Box_.
 
-<img src="/images/DarkSkyHomePage.png" width="70%" />
+<img src="other/DACTDemo.gif" width="70%" />
 
 **<ins>[AnalystBoxFrontend](AnalystBoxFrontend/README.md)</ins>**
 

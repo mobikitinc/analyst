@@ -1,6 +1,6 @@
 # AnalystBox/Frontend
 
-![Screenshot](../images/AnalystBoxFrontend.png)
+![Screenshot](../other/AnalystBoxFrontend.png)
 
 ## Table of Contents
 

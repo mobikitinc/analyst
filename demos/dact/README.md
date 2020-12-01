@@ -1,8 +1,6 @@
 # DACT
 
-![HomePage Screenshot](../../images/DACTHomePage.png)
-
-![SearchPage Screenshot](../../images/DACTSearchPage.png)
+![Demo GIF](../../other/DACTDemo.gif)
 
 <br/>
 

@@ -1,6 +1,6 @@
 # DarkSky
 
-![HomePage Screenshot](../../images/DarkSkyHomePage.png)
+![Demo GIF](../../other/DarkSkyDemo.gif)
 
 <br/>
 
