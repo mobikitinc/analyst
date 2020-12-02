@@ -5,7 +5,6 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Setup](#setup)
 - [Installation](#installation)
 - [Example](#example)
 - [Props](#props)
@@ -22,9 +21,18 @@ AnalystBoxFrontend is an autocompleting, tokenized bolding, keyword highlighting
 
 <br/>
 
-## Setup
+## Installation
 
-_The basics you'll need before you can get started with anything else!_
+```shell
+$ npm install @mobikitinc/analystbox
+```
+
+_However, that's not the only way to install AnalystBoxFrontend!_
+
+<details>
+<summary>Installation Alternatives</summary>
+
+<br/>
 
 1. Clone this repo
 
@@ -33,52 +41,37 @@ _The basics you'll need before you can get started with anything else!_
    ```
 
 2. Check for npm
+
    ```shell
    $ npm --version
    ```
 
-<br/>
-
-## Installation
-
-_AnalystBox isn't on the npm registry, so using it is a bit different than usual!_
-
-<details open>
-<summary>Via Package Folder</summary>
-
-1. Install
-
-   ```shell
-   $ npm install path_to/AnalystBoxFrontend
-   ```
-
-2. Navigate to AnalystBoxFrontend
+3. Navigate to AnalystBoxFrontend
 
    ```shell
    $ cd path_to/AnalystBoxFrontend
    ```
 
-3. Install dependencies
+4. Install dependencies
 
    ```shell
    $ npm ci
    ```
 
-4. Build production dist
+5. Build production dist
+
    ```shell
    $ npm run build
    ```
 
-</details>
+6. Install via Package Folder
 
-<br/>
+   ```shell
+   $ npm install path_to/AnalystBoxFrontend
+   ```
 
-<details>
-<summary>Via Tarball (analystbox-x.x.x.tgz)</summary>
+7. Install via Tarball (analystbox-x.x.x.tgz)
 
-<br/>
-
-1. Install
    ```shell
    $ npm install path_to/analystbox-x.x.x.tgz
    ```
@@ -354,25 +347,37 @@ _See AnalystBox in action!_
 
 _Easily set up a local development environment!_
 
-1. Navigate to AnalystBoxFrontend
+1. Clone this repo
+
+   ```shell
+   $ git clone https://github.com/mobikitinc/analyst.git
+   ```
+
+2. Check for npm
+
+   ```shell
+   $ npm --version
+   ```
+
+3. Navigate to AnalystBoxFrontend
 
    ```shell
    $ cd path_to/AnalystBoxFrontend
    ```
 
-2. Install dependencies
+4. Install dependencies
 
    ```shell
    $ npm ci
    ```
 
-3. Build development dist
+5. Build development dist
 
    ```shell
    $ npm run build:dev
    ```
 
-4. Pack into tarball _(optional)_
+6. Pack into tarball _(optional)_
    ```shell
    $ npm run build:pack
    ```
