@@ -1,28 +1,44 @@
 {
   "name": "@mobikitinc/analystbox",
   "version": "1.0.0",
+  "description": "AnalystBox is an autocompleting, tokenized bolding, keyword highlighting, extremely configurable, fast search-box. It's a React component designed for high versatility, speed, and seamless integration with a wide variety of projects.",
+  "keywords": [
+    "AnalystBox",
+    "React",
+    "search",
+    "autocomplete",
+    "tokenized bolding",
+    "keyword highlighting"
+  ],
+  "homepage": "https://github.com/mobikitinc/analyst/#readme",
+  "license": "Apache-2.0",
+  "author": "Anmol Takiar (https://github.com/atakiar)",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "main": "dist/index.js",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/mobikitinc/analyst.git",
     "directory": "AnalystBoxFrontend"
   },
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
-    "build:clean": "rimraf dist",
+    "build:clean": "rimraf LICENSE dist",
     "build:transpile": "babel src --out-dir dist --copy-files",
+    "build:license": "copyfiles ../LICENSE AnalystBoxFrontend/",
     "build:pack": "npm pack",
-    "build:all": "npm run build:clean && npm run build:transpile && npm run build:pack",
+    "build:all": "npm run build:clean && npm run build:transpile && npm run build:license && npm run build:pack",
     "build:dev": "cross-env BABEL_ENV=development npm run build:clean && npm run build:transpile",
     "build:prod": "cross-env BABEL_ENV=production npm run build:all",
     "build": "npm run build:prod",
-    "test": "nyc ava"
+    "test": "nyc ava",
+    "release:test": "npm run build:prod && npm publish \"mobikitinc-analystbox-$npm_package_version.tgz\" --dry-run",
+    "release": "npm run build:prod && npm publish \"mobikitinc-analystbox-$npm_package_version.tgz\""
   },
   "dependencies": {
     "prop-types": "^15.5.7",
@@ -43,6 +59,7 @@
     "babel-eslint": "^10.0.3",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "babel-preset-minify": "^0.5.1",
+    "copyfiles": "^2.4.1",
     "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
